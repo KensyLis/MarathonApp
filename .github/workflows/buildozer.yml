@@ -22,6 +22,7 @@ jobs:
           mkdir -p $HOME/.android/licenses
           echo -e "\n8933bad161af4178b1185d1a37fbf41ea5261c55" > $HOME/.android/licenses/android-sdk-license
           echo -e "\n84831b9409646a918e30573bab4c9c91346d8a07" > $HOME/.android/licenses/android-sdk-preview-license
+          echo -e "\nd56f5187473751e9f900569720b0213d8033783a" > $HOME/.android/licenses/android-googlesdk-license
       - name: Install Buildozer and Cython
         run: |
           pip3 install --user --upgrade buildozer cython
