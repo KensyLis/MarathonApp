@@ -9,12 +9,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         with:
           buildozer_version: latest
         env:
           PLATFORM: android
+          # Добавляем переменные, чтобы избежать попыток обновления Java
+          # если они были прописаны в коде action
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
