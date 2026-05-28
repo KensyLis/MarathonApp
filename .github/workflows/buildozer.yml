@@ -1,5 +1,6 @@
 name: Build Android APK
-'on':
+
+on:
   push:
     branches:
       - main
@@ -16,15 +17,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
 
+      - name: Accept Android Licenses
+        run: |
+          # Создаем структуру для лицензий
+          mkdir -p $HOME/.android
+          touch $HOME/.android/repositories.cfg
+          # Принимаем все лицензии Android SDK через скрипт
+          # Убедитесь, что buildozer использует установленный SDK
+          yes | sdkmanager --licenses || true
+
       - name: Install Buildozer and Cython
         run: |
           pip3 install --user --upgrade buildozer cython
 
       - name: Build with Buildozer
         run: |
+          # Добавляем путь для доступа к бинарным файлам
           export PATH=$PATH:~/.local/bin/
-          # Принимаем лицензии через переменную окружения, без использования pipe
-          export BUILDOZER_ACCEPT_SDK_LICENSE=1
+          # Запускаем сборку
           buildozer android debug
 
       - name: Upload APK
