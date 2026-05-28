@@ -1,33 +1,4 @@
-name: Build Android APK
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Dependencies
+- name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-
-      - name: Install Buildozer and Cython
-        run: |
-          pip3 install --user --upgrade buildozer cython
-
-      - name: Build with Buildozer
-        run: |
-          # Добавляем путь к pip в PATH
-          export PATH=$PATH:~/.local/bin/
-          buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: marathon-app-apk
-          path: bin/*.apk
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev libncurses5
