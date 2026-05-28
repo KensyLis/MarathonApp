@@ -19,10 +19,9 @@ jobs:
 
       - name: Accept Android Licenses
         run: |
-          # Создаем структуру директорий для лицензий
           mkdir -p $HOME/.android
           touch $HOME/.android/repositories.cfg
-          # Автоматически принимаем все лицензии
+          # Автоматическое принятие всех лицензий Android SDK
           yes | sdkmanager --licenses || true
 
       - name: Install Buildozer and Cython
@@ -32,7 +31,7 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin/
-          # Устанавливаем переменную, подтверждающую принятие лицензии
+          # Переменная для автоматического принятия лицензии buildozer'ом
           export BUILDOZER_ACCEPT_SDK_LICENSE=1
           buildozer android debug
 
