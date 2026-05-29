@@ -16,16 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Ensure Python 3.11 in buildozer.spec
+      - name: Force Python 3.11 in buildozer.spec
         run: |
-          # Если в buildozer.spec нет python_version, добавляем
-          if ! grep -q "^python_version" buildozer.spec; then
-            echo "python_version = 3.11" >> buildozer.spec
-          else
-            sed -i 's/^python_version =.*/python_version = 3.11/' buildozer.spec
-          fi
-          echo "=== buildozer.spec (python_version line) ==="
-          grep "python_version" buildozer.spec || echo "python_version not found"
+          sed -i '/^python_version =/d' buildozer.spec
+          sed -i '/^\[app\]/a python_version = 3.11' buildozer.spec
+          echo "=== buildozer.spec после фикса ==="
+          grep "python_version" buildozer.spec
 
       - name: Clean Buildozer cache
         run: |
