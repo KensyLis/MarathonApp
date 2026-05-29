@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Используем официальный контейнер, где уже всё установлено
     container:
       image: kivy/buildozer:latest
       options: --user root
@@ -18,19 +17,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build with Buildozer
+        env:
+          # Эти переменные отключают все интерактивные запросы [y/n]
+          BUILDOZER_ALLOW_ROOT: 1
+          BUILDOZER_ACCEPT_SDK_LICENSE: 1
         run: |
-          # Устанавливаем права на директорию
+          # Исправление прав доступа для корректной работы buildozer
           chown -R root:root .
-          
-          # Автоматически принимаем лицензии (на всякий случай)
-          export BUILDOZER_ACCEPT_SDK_LICENSE=1
-          
-          # Запускаем сборку
+
+          # Запуск сборки
           buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: marathon-app-apk
-          # Buildozer по умолчанию складывает APK в папку bin
           path: bin/*.apk
