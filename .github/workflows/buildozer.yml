@@ -16,17 +16,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Ensure Python 3.11 in buildozer.spec
+        run: |
+          # Если в buildozer.spec нет python_version, добавляем
+          if ! grep -q "^python_version" buildozer.spec; then
+            echo "python_version = 3.11" >> buildozer.spec
+          else
+            sed -i 's/^python_version =.*/python_version = 3.11/' buildozer.spec
+          fi
+          echo "=== buildozer.spec (python_version line) ==="
+          grep "python_version" buildozer.spec || echo "python_version not found"
+
+      - name: Clean Buildozer cache
+        run: |
+          rm -rf .buildozer
+          rm -rf ~/.buildozer
+
       - name: Build with Buildozer
         env:
-          # Эти переменные отключают некоторые интерактивные запросы (например, лицензии SDK)
           BUILDOZER_ALLOW_ROOT: 1
           BUILDOZER_ACCEPT_SDK_LICENSE: 1
         run: |
-          # Исправление прав доступа для корректной работы buildozer
           chown -R root:root .
-          
-          # Запуск сборки с автоматическим ответом 'y' на запрос "Are you sure you want to continue [y/n]?"
-          yes | buildozer android debug
+          yes | buildozer android debug --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
