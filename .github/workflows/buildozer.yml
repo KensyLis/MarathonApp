@@ -8,34 +8,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Используем официальный контейнер, где уже всё установлено
+    container:
+      image: kivy/buildozer:latest
+      options: --user root
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
-
-      - name: Accept Android Licenses
-        run: |
-          mkdir -p $HOME/.android/licenses
-          echo -e "\n8933bad161af4178b1185d1a37fbf41ea5261c55" > $HOME/.android/licenses/android-sdk-license
-          echo -e "\n84831b9409646a918e30573bab4c9c91346d8a07" > $HOME/.android/licenses/android-sdk-preview-license
-          echo -e "\nd56f5187473751e9f900569720b0213d8033783a" > $HOME/.android/licenses/android-googlesdk-license
-      - name: Install Buildozer and Cython
-        run: |
-          pip3 install --user --upgrade buildozer cython
-
       - name: Build with Buildozer
         run: |
-          export PATH=$PATH:~/.local/bin/
-          # Переменная для автоматического принятия лицензии buildozer'ом
+          # Устанавливаем права на директорию
+          chown -R root:root .
+          
+          # Автоматически принимаем лицензии (на всякий случай)
           export BUILDOZER_ACCEPT_SDK_LICENSE=1
+          
+          # Запускаем сборку
           buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: marathon-app-apk
+          # Buildozer по умолчанию складывает APK в папку bin
           path: bin/*.apk
