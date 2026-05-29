@@ -18,15 +18,15 @@ jobs:
 
       - name: Build with Buildozer
         env:
-          # Эти переменные отключают все интерактивные запросы [y/n]
+          # Эти переменные отключают некоторые интерактивные запросы (например, лицензии SDK)
           BUILDOZER_ALLOW_ROOT: 1
           BUILDOZER_ACCEPT_SDK_LICENSE: 1
         run: |
           # Исправление прав доступа для корректной работы buildozer
           chown -R root:root .
-
-          # Запуск сборки
-          buildozer android debug
+          
+          # Запуск сборки с автоматическим ответом 'y' на запрос "Are you sure you want to continue [y/n]?"
+          yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
